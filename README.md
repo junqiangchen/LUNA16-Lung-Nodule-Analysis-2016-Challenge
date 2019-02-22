@@ -5,25 +5,27 @@
 ## How to Use
 
 **1、Preprocess**
-*convert annotation.csv file to image mask file:run the LUNA_mask_extraction.py
-*analyze the ct image,and get the slice thickness and window width and position:run the dataAnaly.py
-*get lung nodule ct image and mask:run the data2dprepare.py
-*get patch(96,96,16) lung nodule image and mask:run the data3dprepare.py
-*convert candidates.csv file to nodule and not-nodule image(48,48,48):run the LUNA_node_extraction.py
-*Augment the nodule image data:run the Augmain.py
-*split data into train data(80%) and test data(20%):run the subset.py
+* convert annotation.csv file to image mask file:run the LUNA_mask_extraction.py
+* analyze the ct image,and get the slice thickness and window width and position:run the dataAnaly.py
+* get lung nodule ct image and mask:run the data2dprepare.py
+* get patch(96,96,16) lung nodule image and mask:run the data3dprepare.py
+* convert candidates.csv file to nodule and not-nodule image(48,48,48):run the LUNA_node_extraction.py
+* Augment the nodule image data:run the Augmain.py
+* split data into train data(80%) and test data(20%):run the subset.py
 
 **2、Nodule Detection**
-*the VNet model
+* the VNet model
+
 ![](3dVNet.png) 
+
 * train and predict in the script of vnet3d_train.py and vnet3d_predict.py
-
 **3、False Positive Reducution**
-*the ResVGGNet model
-![](ResVGGNet.png)
-* train and predict in the script of ResNet3d_train.py and ResNet3d_predict.py
+* the ResVGGNet model
 
-**4、trained model can download on here:
+![](ResVGGNet.png)
+
+* train and predict in the script of ResNet3d_train.py and ResNet3d_predict.py
+**4、trained model can download on here:**
 
 ## Result
 
