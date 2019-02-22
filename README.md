@@ -19,12 +19,14 @@
 ![](3dVNet.png) 
 
 * train and predict in the script of vnet3d_train.py and vnet3d_predict.py
+
 **3、False Positive Reducution**
 * the ResVGGNet model
 
 ![](ResVGGNet.png)
 
 * train and predict in the script of ResNet3d_train.py and ResNet3d_predict.py
+
 **4、trained model can download on here:**
 
 ## Result
