@@ -33,6 +33,25 @@
 
 ## Result
 
+**1、Nodule Detection**
+
+![](segloss1.PNG)
+![](segaccuracy.PNG)
+
+* the segment result
+
+![](segImage.bmp)
+
+**2、False Positive Reducution**
+
+![](classfy_loss.PNG)
+![](classfy_accu.PNG)
+
+* ROC,Confusion Matrix and Metrics
+
+![](roc.PNG)
+![](Confusion Matrix.PNG)
+![](metric.PNG)
 
 ## Contact
 * https://github.com/junqiangchen
