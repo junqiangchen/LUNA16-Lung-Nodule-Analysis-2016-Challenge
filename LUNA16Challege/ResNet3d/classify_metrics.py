@@ -108,12 +108,12 @@ def classify_metric_message(predict_label_file, name=None):
     elif name == "main_classify":
         classification_reports(true_labels, predict_labels)
     elif name == "roc_curve":
-        threshold_num = 200
+        threshold_num = 2000
         save_dir = "log"
         roc = tf_roc(predict_probs, true_labels, int(threshold_num), save_dir)
         roc.calc()
 
 
 if __name__ == '__main__':
-    predict_label_file = "roc.csv"
+    predict_label_file = "classify_metrics.csv"
     classify_metric_message(predict_label_file, name="roc_curve")

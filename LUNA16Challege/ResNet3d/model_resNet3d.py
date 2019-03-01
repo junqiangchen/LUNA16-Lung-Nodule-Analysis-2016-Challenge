@@ -228,10 +228,13 @@ class ResNet3dModule(object):
         test_images = test_images.astype(np.float)
         test_images = np.multiply(test_images, 1.0 / 255.0)
 
-        predictvalue = np.zeros(test_images.shap[0])
+        predictvalue = np.zeros(test_images.shape[0])
+        predict_probvalue = np.zeros(test_images.shape[0], np.float32)
         y_dummy = np.empty((test_images.shape[0], self.n_class))
-        for i in range(test_images.shap[0]):
-            predictvalue[i] = self.sess.run(self.predict, feed_dict={self.X: [test_images[i]],
-                                                                     self.Y_gt: y_dummy,
-                                                                     self.drop: 1})
-        return predictvalue
+        for i in range(test_images.shape[0]):
+            predictvaluetmp, predict_probvaluetmp = self.sess.run([self.predict, self.Y_pred],
+                                                                  feed_dict={self.X: [test_images[i]],
+                                                                             self.Y_gt: y_dummy,
+                                                                             self.drop: 1})
+            predictvalue[i], predict_probvalue[i] = predictvaluetmp, predict_probvaluetmp[0][1]
+        return predictvalue, predict_probvalue
