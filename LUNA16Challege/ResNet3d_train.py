@@ -21,7 +21,7 @@ def train():
     # label,data_npy
     # ....
     #
-    csvimagedata = pd.read_csv('dataprocess\\data\\classify_train.csv')
+    csvimagedata = pd.read_csv('dataprocess\\data\\nodel_all_train.csv')
     data = csvimagedata.iloc[:, :].values
     np.random.shuffle(data)
     # For Image
