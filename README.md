@@ -35,6 +35,8 @@
 
 **1、Nodule Detection**
 
+* train loss and train accuracy
+
 ![](segloss1.PNG)
 ![](segaccuracy.PNG)
 
@@ -44,13 +46,15 @@
 
 **2、False Positive Reducution**
 
+* train loss and train accuracy
+
 ![](classfy_loss.PNG)
 ![](classfy_accu.PNG)
 
 * ROC,Confusion Matrix and Metrics
 
 ![](roc.PNG)
-![](Confusion Matrix.PNG)
+![](ConfusionMatrix.PNG)
 ![](metric.PNG)
 
 ## Contact
