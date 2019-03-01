@@ -29,7 +29,8 @@
 
 * train and predict in the script of ResNet3d_train.py and ResNet3d_predict.py
 
-**4、trained model can download on here:**
+**4、download trained model**
+* i have shared the trained model of nodule detection and false positive reduction on here:https://pan.baidu.com/s/1fbb32NaVlrWWdEttWHP0bw,password:9y42
 
 ## Result
 
