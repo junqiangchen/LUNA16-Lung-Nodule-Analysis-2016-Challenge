@@ -65,7 +65,7 @@ def max_pool3d(x, depth=False):
 
 
 # Batch Normalization
-def normalizationlayer(x, height=None, width=None, image_z=None, norm_type=None, G=16, esp=1e-5, scope=None):
+def normalizationlayer(x, is_train, height=None, width=None, image_z=None, norm_type=None, G=16, esp=1e-5, scope=None):
     """
     :param x:input data with shap of[batch,height,width,channel]
     :param is_train:flag of normalizationlayer,True is training,False is Testing
@@ -82,7 +82,8 @@ def normalizationlayer(x, height=None, width=None, image_z=None, norm_type=None,
         if norm_type == None:
             output = x
         elif norm_type == 'batch':
-            output = tf.contrib.layers.batch_norm(x, center=True, scale=True)
+            # is_train is True when Training,is False when Testing
+            output = tf.contrib.layers.batch_norm(x, center=True, scale=True, is_training=is_train)
         elif norm_type == "group":
             # tranpose:[bs,z,h,w,c]to[bs,c,z,h,w]following the paper
             x = tf.transpose(x, [0, 4, 1, 2, 3])

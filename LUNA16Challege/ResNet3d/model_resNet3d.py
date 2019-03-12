@@ -8,13 +8,13 @@ import numpy as np
 import os
 
 
-def conv_relu_drop(x, kernal, drop, image_z=None, height=None, width=None, scope=None):
+def conv_relu_drop(x, kernal, drop, phase, image_z=None, height=None, width=None, scope=None):
     with tf.name_scope(scope):
         W = weight_xavier_init(shape=kernal, n_inputs=kernal[0] * kernal[1] * kernal[2] * kernal[3],
                                n_outputs=kernal[-1], activefunction='relu', variable_name=scope + 'conv_W')
         B = bias_variable([kernal[-1]], variable_name=scope + 'conv_B')
         conv = conv3d(x, W) + B
-        conv = normalizationlayer(conv, height=height, width=width, image_z=image_z, norm_type='group',
+        conv = normalizationlayer(conv, is_train=phase, height=height, width=width, image_z=image_z, norm_type='batch',
                                   scope=scope)
         conv = tf.nn.dropout(tf.nn.relu(conv), drop)
         return conv
@@ -34,40 +34,40 @@ def full_connected_relu_drop(x, kernal, drop, activefunction='relu', scope=None)
         return FC
 
 
-def _create_conv_net(X, image_z, image_width, image_height, image_channel, drop, n_class=1):
+def _create_conv_net(X, image_z, image_width, image_height, image_channel, drop, phase, n_class=1):
     inputX = tf.reshape(X, [-1, image_z, image_width, image_height, image_channel])  # shape=(?, 32, 32, 1)
     # Vnet model
     # layer1->convolution
-    layer0 = conv_relu_drop(x=inputX, kernal=(3, 3, 3, image_channel, 16), drop=drop, scope='layer0')
-    layer1 = conv_relu_drop(x=layer0, kernal=(3, 3, 3, 16, 16), drop=drop, scope='layer1')
+    layer0 = conv_relu_drop(x=inputX, kernal=(3, 3, 3, image_channel, 16), drop=drop, phase=phase, scope='layer0')
+    layer1 = conv_relu_drop(x=layer0, kernal=(3, 3, 3, 16, 16), drop=drop, phase=phase, scope='layer1')
     layer1 = resnet_Add(x1=layer0, x2=layer1)
     # down sampling1
     down1 = max_pool3d(x=layer1, depth=True)
     # down1 = down_sampling(x=layer1, kernal=(3, 3, 3, 32, 64), drop=drop, scope='down1')
     # layer2->convolution
-    layer2 = conv_relu_drop(x=down1, kernal=(3, 3, 3, 16, 32), drop=drop, scope='layer2_1')
-    layer2 = conv_relu_drop(x=layer2, kernal=(3, 3, 3, 32, 32), drop=drop, scope='layer2_2')
+    layer2 = conv_relu_drop(x=down1, kernal=(3, 3, 3, 16, 32), drop=drop, phase=phase, scope='layer2_1')
+    layer2 = conv_relu_drop(x=layer2, kernal=(3, 3, 3, 32, 32), drop=drop, phase=phase, scope='layer2_2')
     layer2 = resnet_Add(x1=down1, x2=layer2)
     # down sampling2
     down2 = max_pool3d(x=layer2, depth=True)
     # down2 = down_sampling(x=layer2, kernal=(3, 3, 3, 64, 128), drop=drop, scope='down2')
     # layer3->convolution
-    layer3 = conv_relu_drop(x=down2, kernal=(3, 3, 3, 32, 64), drop=drop, scope='layer3_1')
-    layer3 = conv_relu_drop(x=layer3, kernal=(3, 3, 3, 64, 64), drop=drop, scope='layer3_2')
+    layer3 = conv_relu_drop(x=down2, kernal=(3, 3, 3, 32, 64), drop=drop, phase=phase, scope='layer3_1')
+    layer3 = conv_relu_drop(x=layer3, kernal=(3, 3, 3, 64, 64), drop=drop, phase=phase, scope='layer3_2')
     layer3 = resnet_Add(x1=down2, x2=layer3)
     # down sampling3
     down3 = max_pool3d(x=layer3, depth=True)
     # down3 = down_sampling(x=layer3, kernal=(3, 3, 3, 128, 256), drop=drop, scope='down3')
     # layer4->convolution
-    layer4 = conv_relu_drop(x=down3, kernal=(3, 3, 3, 64, 128), drop=drop, scope='layer4_1')
-    layer4 = conv_relu_drop(x=layer4, kernal=(3, 3, 3, 128, 128), drop=drop, scope='layer4_2')
+    layer4 = conv_relu_drop(x=down3, kernal=(3, 3, 3, 64, 128), drop=drop, phase=phase, scope='layer4_1')
+    layer4 = conv_relu_drop(x=layer4, kernal=(3, 3, 3, 128, 128), drop=drop, phase=phase, scope='layer4_2')
     layer4 = resnet_Add(x1=down3, x2=layer4)
     # down sampling4
     down4 = max_pool3d(x=layer4, depth=True)
     # down4 = down_sampling(x=layer4, kernal=(3, 3, 3, 256, 512), drop=drop, scope='down4')
     # layer5->convolution
-    layer5 = conv_relu_drop(x=down4, kernal=(3, 3, 3, 128, 256), drop=drop, scope='layer5_1')
-    layer5 = conv_relu_drop(x=layer5, kernal=(3, 3, 3, 256, 256), drop=drop, scope='layer5_2')
+    layer5 = conv_relu_drop(x=down4, kernal=(3, 3, 3, 128, 256), drop=drop, phase=phase, scope='layer5_1')
+    layer5 = conv_relu_drop(x=layer5, kernal=(3, 3, 3, 256, 256), drop=drop, phase=phase, scope='layer5_2')
     layer5 = resnet_Add(x1=down4, x2=layer5)
     # layer6->FC1
     layer6 = tf.reshape(layer5, [-1, 3 * 3 * 3 * 256])  # shape=(?, 512)
@@ -122,10 +122,11 @@ class ResNet3dModule(object):
                                                 self.channels])
         self.Y_gt = tf.placeholder("float", shape=[None, self.n_class])
         self.lr = tf.placeholder('float')
+        self.phase = tf.placeholder(tf.bool)
         self.drop = tf.placeholder('float')
 
         self.Y_pred_logits = _create_conv_net(self.X, self.image_depth, self.image_width, self.image_height,
-                                              self.channels, self.drop, n_class=n_class)
+                                              self.channels, self.drop, self.phase, n_class=n_class)
         self.cost = self.__get_cost(costname, self.Y_pred_logits)
 
         self.Y_pred = tf.nn.softmax(self.Y_pred_logits)
@@ -162,7 +163,12 @@ class ResNet3dModule(object):
         if not os.path.exists(logs_path + "model\\"):
             os.makedirs(logs_path + "model\\")
         model_path = logs_path + "model\\" + model_path
-        train_op = tf.train.AdamOptimizer(self.lr).minimize(self.cost)
+
+        # update the moving average of batch norm before finish the training step
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        with tf.control_dependencies(update_ops):
+            # ensures that we execute the update_ops before performing the train_step
+            train_op = tf.train.AdamOptimizer(self.lr).minimize(self.cost)
 
         init = tf.global_variables_initializer()
         saver = tf.train.Saver(tf.all_variables(), max_to_keep=10)
@@ -199,11 +205,13 @@ class ResNet3dModule(object):
                                                       feed_dict={self.X: batch_xs[batch_size // 5:],
                                                                  self.Y_gt: batch_ys[batch_size // 5:],
                                                                  self.lr: learning_rate,
-                                                                 self.drop: dropout_conv})
+                                                                 self.drop: dropout_conv,
+                                                                 self.phase: 1})
                 validataion_accuracy = self.accuracy.eval(feed_dict={self.X: batch_xs[0:batch_size // 5],
                                                                      self.Y_gt: batch_ys[0:batch_size // 5],
                                                                      self.lr: learning_rate,
-                                                                     self.drop: dropout_conv})
+                                                                     self.drop: dropout_conv,
+                                                                     self.phase: 1})
                 print('epochs %d training_loss ,training_accuracy,validation_accuracy => %.5f,%.5f,%5f ' % (
                     i, train_loss, train_accuracy, validataion_accuracy))
                 save_path = saver.save(sess, model_path, global_step=i)
@@ -215,7 +223,8 @@ class ResNet3dModule(object):
             _, summary = sess.run([train_op, merged_summary_op], feed_dict={self.X: batch_xs,
                                                                             self.Y_gt: batch_ys,
                                                                             self.lr: learning_rate,
-                                                                            self.drop: dropout_conv})
+                                                                            self.drop: dropout_conv,
+                                                                            self.phase: 1})
             summary_writer.add_summary(summary, i)
         summary_writer.close()
 
@@ -235,6 +244,7 @@ class ResNet3dModule(object):
             predictvaluetmp, predict_probvaluetmp = self.sess.run([self.predict, self.Y_pred],
                                                                   feed_dict={self.X: [test_images[i]],
                                                                              self.Y_gt: y_dummy,
-                                                                             self.drop: 1})
+                                                                             self.drop: 1,
+                                                                             self.phase: 0})
             predictvalue[i], predict_probvalue[i] = predictvaluetmp, predict_probvaluetmp[0][1]
         return predictvalue, predict_probvalue
