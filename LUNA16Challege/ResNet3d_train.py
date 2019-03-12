@@ -1,7 +1,7 @@
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from tensorflow.python.client import device_lib
 
 print(device_lib.list_local_devices())
@@ -29,7 +29,7 @@ def train():
     # For Labels
     labels = data[:, 0]
     ResNet3d = ResNet3dModule(48, 48, 48, channels=1, n_class=2, costname="cross_entropy")
-    ResNet3d.train(images, labels, "resnet.pd", "log\\NoudleClassfy\\resnet\\", 0.001, 0.5, 5, 32)
+    ResNet3d.train(images, labels, "resnet.pd", "log\\NoudleClassfy\\resnet\\", 0.001, 0.7, 5, 32)
 
 
 train()
