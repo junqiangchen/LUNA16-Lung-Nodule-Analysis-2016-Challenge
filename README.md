@@ -5,54 +5,54 @@
 ## How to Use
 
 **1、Preprocess**
-* convert annotation.csv file to image mask file:run the LUNA_mask_extraction.py
-* analyze the ct image,and get the slice thickness and window width and position:run the dataAnaly.py
-* generate lung nodule ct image and mask:run the data2dprepare.py
-* save lung nodule data and mask into csv file like this:G:\Data\segmentation\Image/0_161....
-* generate patch(96,96,16) lung nodule image and mask:run the data3dprepare.py
-* convert candidates.csv file to nodule and not-nodule image(48,48,48):run the LUNA_node_extraction.py
-* Augment the nodule image data:run the Augmain.py
-* split data into train data(80%) and test data(20%):run the subset.py
-* save lung nodule data and label into csv file like this:1,G:\Data\classify\1_aug/0_17.npy
+* convert `annotation.csv` file to image mask file: run the `LUNA_mask_extraction.py`
+* analyze the ct image,and get the slice thickness and window width and position: run the `dataAnaly.py`
+* generate lung nodule ct image and mask: run the `data2dprepare.py`
+* save lung nodule data and mask into csv file like this: G:\Data\segmentation\Image/0_161....
+* generate patch (96,96,16) lung nodule image and mask: run the `data3dprepare.py`
+* convert `candidates.csv` file to nodule and not-nodule image (48,48,48): run the `LUNA_node_extraction.py`
+* Augment the nodule image data: run the `Augmain.py`
+* split data into train data (80%) and test data (20%): run the `subset.py`
+* save lung nodule data and label into csv file like this: 1,G:\Data\classify\1_aug/0_17.npy
 
 **2、Nodule Detection**
 * the VNet model
 
 ![](3dVNet.png) 
 
-* train and predict in the script of vnet3d_train.py and vnet3d_predict.py
+* train and predict in the script of `vnet3d_train.py` and `vnet3d_predict.py`
 
-**3、False Positive Reducution**
-* the ResVGGNet model
+**3、False Positive Reduction**
+* The ResVGGNet model
 
 ![](ResVGGNet.png)
 
-* train and predict in the script of ResNet3d_train.py and ResNet3d_predict.py
+* Train and predict in the script of `ResNet3d_train.py` and `ResNet3d_predict.py`
 
 **4、download trained model**
-* i have shared the trained model of nodule detection and false positive reduction on here:https://pan.baidu.com/s/1fbb32NaVlrWWdEttWHP0bw,password:9y42
+* I have shared the trained model of nodule detection and false positive reduction on here: https://pan.baidu.com/s/1fbb32NaVlrWWdEttWHP0bw password:9y42
 
 ## Result
 
 **1、Nodule Detection**
 
-* train loss and train accuracy
+* Train loss and train accuracy
 
 ![](segloss1.PNG)
 ![](segaccuracy.PNG)
 
-* the segment result
+* The segment result
 
 ![](segImage.bmp)
 
-**2、False Positive Reducution**
+**2、False Positive Reduction**
 
-* train loss and train accuracy
+* Train loss and train accuracy
 
 ![](classfy_loss.PNG)
 ![](classfy_accu.PNG)
 
-* ROC,Confusion Matrix and Metrics
+* ROC, Confusion Matrix and Metrics
 
 ![](roc.PNG)
 ![](ConfusionMatrix.PNG)
