@@ -5,12 +5,16 @@
 ## How to Use
 
 **1、Preprocess**
+
 **nodule detection**
+
 * convert annotation.csv file to image mask file:run the LUNA_mask_extraction.py
 * analyze the ct image,and get the slice thickness and window width and position:run the dataAnaly.py
 * generate lung nodule ct image and mask:run the data2dprepare.py
 * save lung nodule data and mask into csv file like this:G:\Data\segmentation\Image/0_161....
+
 **nodule classify**
+
 * generate patch(96,96,16) lung nodule image and mask:run the data3dprepare.py
 * convert candidates.csv file to nodule and not-nodule image(48,48,48):run the LUNA_node_extraction.py
 * Augment the nodule image data:run the Augmain.py
