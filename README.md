@@ -11,7 +11,7 @@
 * convert annotation.csv file to image mask file:run the LUNA_mask_extraction.py
 * analyze the ct image,and get the slice thickness and window width and position:run the dataAnaly.py
 * generate lung nodule ct image and mask:run the data2dprepare.py
-* save lung nodule data and mask into csv file like this:G:\Data\segmentation\Image/0_161....
+* save lung nodule data and mask into csv file run the utils.py,like this:G:\Data\segmentation\Image/0_161....
 
 **nodule classify**
 
