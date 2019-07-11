@@ -15,7 +15,7 @@ def file_name_path(file_dir):
 
 def save_file2csv(file_dir, file_name):
     """
-    save file path to csv
+    save file path to csv,this is for segmentation
     :param file_dir:preprocess data path
     :param file_name:output csv name
     :return:
@@ -27,4 +27,4 @@ def save_file2csv(file_dir, file_name):
         out.writelines(file_dir + "/" + sub_dirs[index] + "\n")
 
 
-save_file2csv("G:\Data\LIST\\3dliver_25625616\Image", "train_X.csv")
+#save_file2csv("G:\Data\LIST\\3dliver_25625616\Image", "train_X.csv")
