@@ -4,9 +4,9 @@ import cv2
 import os
 
 
-def subimage_generator(image, patch_block_size, numberxy, numberz):
+def subimage_generator(image, mask, patch_block_size, numberxy, numberz):
     """
-    generate the sub images with patch_block_size
+    generate the sub images and masks with patch_block_size
     :param image:
     :param patch_block_size:
     :param stride:
@@ -18,75 +18,43 @@ def subimage_generator(image, patch_block_size, numberxy, numberz):
     block_width = np.array(patch_block_size)[1]
     block_height = np.array(patch_block_size)[2]
     blockz = np.array(patch_block_size)[0]
-
-    stridewidth = (width - block_width) // (numberxy - 1)
-    strideheight = (height - block_height) // (numberxy - 1)
-    fix_stridez = numberz // 2
-    stridez = (imagez - blockz) // fix_stridez
-    # step 1:if image size of z is smaller than blockz,return zeros samples
-    if imagez < blockz:
-        nb_sub_images = numberxy * numberxy * 1
-        hr_samples = np.zeros(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float32)
-        indx = 0
-        for x in range(0, width - block_width + 1, stridewidth):
-            for y in range(0, height - block_height + 1, strideheight):
-                hr_samples[indx, 0:imagez, :, :] = image[:, x:x + block_width, y:y + block_height]
-                indx += 1
-        if (indx != nb_sub_images):
-            print(indx)
-            print(nb_sub_images)
-            raise ValueError("error sub number image")
-        return hr_samples
-    # step 2:if stridez is bigger 1,return  numberxy * numberxy * numberz samples
-    if stridez >= 1:
-        nb_sub_images = numberxy * numberxy * (stridez + 1)
-        hr_samples = np.empty(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float32)
-        indx = 0
-        for z in range(0, fix_stridez * (stridez + 1), fix_stridez):
-            for x in range(0, width - block_width + 1, stridewidth):
-                for y in range(0, height - block_height + 1, strideheight):
-                    hr_samples[indx, :, :, :] = image[z:z + blockz, x:x + block_width, y:y + block_height]
-                    indx += 1
-
-        if (indx != nb_sub_images):
-            print(indx)
-            print(nb_sub_images)
-            raise ValueError("error sub number image")
-        return hr_samples
-
-    # step3: if stridez==imagez,return numberxy * numberxy * 1 samples,one is [0:blockz,:,:]
-    if imagez == blockz:
-        nb_sub_images = numberxy * numberxy * 1
-        hr_samples = np.empty(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float32)
-        indx = 0
-        for x in range(0, width - block_width + 1, stridewidth):
-            for y in range(0, height - block_height + 1, strideheight):
-                hr_samples[indx, :, :, :] = image[:, x:x + block_width, y:y + block_height]
-                indx += 1
-        if (indx != nb_sub_images):
-            print(indx)
-            print(nb_sub_images)
-            raise ValueError("error sub number image")
-        return hr_samples
-    # step4: if stridez==0,return numberxy * numberxy * 2 samples,one is [0:blockz,:,:],two is [-blockz-1:-1,:,:]
-    if stridez == 0:
-        nb_sub_images = numberxy * numberxy * 2
-        hr_samples = np.empty(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float32)
-        indx = 0
-        for x in range(0, width - block_width + 1, stridewidth):
-            for y in range(0, height - block_height + 1, strideheight):
-                hr_samples[indx, :, :, :] = image[0:blockz, x:x + block_width, y:y + block_height]
-                indx += 1
-                hr_samples[indx, :, :, :] = image[-blockz - 1:-1, x:x + block_width, y:y + block_height]
-                indx += 1
-        if (indx != nb_sub_images):
-            print(indx)
-            print(nb_sub_images)
-            raise ValueError("error sub number image")
-        return hr_samples
+    stridewidth = (width - block_width) // numberxy
+    strideheight = (height - block_height) // numberxy
+    stridez = (imagez - blockz) // numberz
+    # step 1:if stridez is bigger 1,return  numberxy * numberxy * numberz samples
+    if stridez >= 1 and stridewidth >= 1 and strideheight >= 1:
+        step_width = width - (stridewidth * numberxy + block_width)
+        step_width = step_width // 2
+        step_height = height - (strideheight * numberxy + block_height)
+        step_height = step_height // 2
+        step_z = imagez - (stridez * numberz + blockz)
+        step_z = step_z // 2
+        hr_samples_list = []
+        hr_mask_samples_list = []
+        for z in range(step_z, numberz * (stridez + 1) + step_z, numberz):
+            for x in range(step_width, numberxy * (stridewidth + 1) + step_width, numberxy):
+                for y in range(step_height, numberxy * (strideheight + 1) + step_height, numberxy):
+                    if np.max(mask[z:z + blockz, x:x + block_width, y:y + block_height]) != 0:
+                        hr_samples_list.append(image[z:z + blockz, x:x + block_width, y:y + block_height])
+                        hr_mask_samples_list.append(mask[z:z + blockz, x:x + block_width, y:y + block_height])
+        hr_samples = np.array(hr_samples_list).reshape((len(hr_samples_list), blockz, block_width, block_height))
+        hr_mask_samples = np.array(hr_mask_samples_list).reshape(
+            (len(hr_mask_samples_list), blockz, block_width, block_height))
+        return hr_samples, hr_mask_samples
+    # step 2:other sutitation,return one samples
+    else:
+        nb_sub_images = 1 * 1 * 1
+        hr_samples = np.zeros(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float)
+        hr_mask_samples = np.zeros(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float)
+        rangz = lambda imagez, blockz: imagez if imagez < blockz else blockz
+        rangwidth = lambda width, block_width: width if width < block_width else block_width
+        rangheight = lambda height, block_height: height if width < block_height else block_height
+        hr_samples[0, 0:blockz, 0:block_width, 0:block_height] = image[0:rangz, 0:rangwidth, 0:rangheight]
+        hr_mask_samples[0, 0:blockz, 0:block_width, 0:block_height] = mask[0:rangz, 0:rangwidth, 0:rangheight]
+        return hr_samples, hr_mask_samples
 
 
-def make_patch(image, patch_block_size, numberxy, numberz):
+def make_patch(image, mask, patch_block_size, numberxy, numberz):
     """
     make number patch
     :param image:[depth,512,512]
@@ -94,15 +62,14 @@ def make_patch(image, patch_block_size, numberxy, numberz):
     :return:[samples,64,128,128]
     expand the dimension z range the subimage:[startpostion-blockz//2:endpostion+blockz//2,:,:]
     """
-    image_subsample = subimage_generator(image=image, patch_block_size=patch_block_size, numberxy=numberxy,
-                                         numberz=numberz)
-    return image_subsample
+    image_subsample, mask_subsample = subimage_generator(image=image, mask=mask, patch_block_size=patch_block_size,
+                                                         numberxy=numberxy, numberz=numberz)
+    return image_subsample, mask_subsample
 
 
 def gen_image_mask(srcimg, seg_image, index, shape, numberxy, numberz, trainImage, trainMask):
     # step 2 get subimages (numberxy*numberxy*numberz,64, 128, 128)
-    sub_srcimages = make_patch(srcimg, patch_block_size=shape, numberxy=numberxy, numberz=numberz)
-    sub_liverimages = make_patch(seg_image, patch_block_size=shape, numberxy=numberxy, numberz=numberz)
+    sub_srcimages,sub_liverimages = make_patch(srcimg,seg_image, patch_block_size=shape, numberxy=numberxy, numberz=numberz)
     # step 3 only save subimages (numberxy*numberxy*numberz,64, 128, 128)
     samples, imagez = np.shape(sub_srcimages)[0], np.shape(sub_srcimages)[1]
     for j in range(samples):
