@@ -46,11 +46,11 @@ def subimage_generator(image, mask, patch_block_size, numberxy, numberz):
         nb_sub_images = 1 * 1 * 1
         hr_samples = np.zeros(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float)
         hr_mask_samples = np.zeros(shape=(nb_sub_images, blockz, block_width, block_height), dtype=np.float)
-        rangz = lambda imagez, blockz: imagez if imagez < blockz else blockz
-        rangwidth = lambda width, block_width: width if width < block_width else block_width
-        rangheight = lambda height, block_height: height if width < block_height else block_height
-        hr_samples[0, 0:blockz, 0:block_width, 0:block_height] = image[0:rangz, 0:rangwidth, 0:rangheight]
-        hr_mask_samples[0, 0:blockz, 0:block_width, 0:block_height] = mask[0:rangz, 0:rangwidth, 0:rangheight]
+        rangz = min(imagez, blockz)
+        rangwidth = min(width, block_width)
+        rangheight = min(height, block_height)
+        hr_samples[0, 0:rangz, 0:rangwidth, 0:rangheight] = image[0:rangz, 0:rangwidth, 0:rangheight]
+        hr_mask_samples[0, 0:rangz, 0:rangwidth, 0:rangheight] = mask[0:rangz, 0:rangwidth, 0:rangheight]
         return hr_samples, hr_mask_samples
 
 
