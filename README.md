@@ -2,6 +2,15 @@
 > This is an example of the CT images lung nodule detection and false positive reduction from LUNA16-LUng-Nodule-Analysis-2016-Challenge
 ![](luna16_header.png)
 
+## Prerequisities
+The following dependencies are needed:
+- numpy >= 1.11.1
+- SimpleITK >=1.0.1
+- opencv-python >=3.3.0
+- tensorflow-gpu ==1.8.0
+- pandas >=0.20.1
+- scikit-learn >= 0.17.1
+
 ## How to Use
 
 **1、Preprocess**
