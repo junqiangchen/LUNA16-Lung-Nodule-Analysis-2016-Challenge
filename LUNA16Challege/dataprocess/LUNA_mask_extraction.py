@@ -83,10 +83,10 @@ for subsetindex in range(10):
                 # nodule center
                 v_center = np.rint((center - origin) / spacing)
                 # nodule diam
-                v_diam = np.rint((diam - origin) / spacing)
+                v_diam = int(diam/spacing[0]+3)
                 # convert x,y,z order v_center to z,y,z order v_center
                 v_center[0], v_center[1], v_center[2] = v_center[2], v_center[1], v_center[0]
-                make_mask(mask_itk, v_center, diam)
+                make_mask(mask_itk, v_center, v_diam)
 
             mask_itk = np.uint8(mask_itk * 255.)
             mask_itk = np.clip(mask_itk, 0, 255).astype('uint8')
