@@ -49,10 +49,11 @@ for subsetindex in range(10):
     df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_list_path, file_name))
     df_node = df_node.dropna()
     # Looping over the image files
-    for fcount, img_file in enumerate(tqdm(file_list)):
+    for fcount, img_file in enumerate(tqdm(file_list_path)):
         # get all nodules associate with file
         mini_df = df_node[df_node["file"] == img_file]
         # load the src data once
+        img_file=img_file+".mhd"
         itk_img = sitk.ReadImage(img_file)
         # indexes are z,y,x (notice the ordering)
         img_array = sitk.GetArrayFromImage(itk_img)
@@ -66,14 +67,6 @@ for subsetindex in range(10):
         if mini_df.shape[0] == 0:
             # set out mask data once
             mask_itk = np.zeros(shape=(num_z, height, width), dtype=np.float)
-            mask_itk = np.uint8(mask_itk * 255.)
-            mask_itk = np.clip(mask_itk, 0, 255).astype('uint8')
-            sitk_maskimg = sitk.GetImageFromArray(mask_itk)
-            sitk_maskimg.SetSpacing(spacing)
-            sitk_maskimg.SetOrigin(origin)
-            # substring of input file path ang save output mask file
-            sub_img_file = img_file[len(luna_subset_path):-4]
-            sitk.WriteImage(sitk_maskimg, luna_subset_mask_path + sub_img_file + "_segmentation.mhd")
         if mini_df.shape[0] > 0:
             # set out mask data once
             mask_itk = np.zeros(shape=(num_z, height, width), dtype=np.float)
@@ -92,10 +85,10 @@ for subsetindex in range(10):
                 v_center[0], v_center[1], v_center[2] = v_center[2], v_center[1], v_center[0]
                 make_mask(mask_itk, v_center, v_diam)
 
-            mask_itk = np.uint8(mask_itk * 255.)
-            mask_itk = np.clip(mask_itk, 0, 255).astype('uint8')
-            sitk_maskimg = sitk.GetImageFromArray(mask_itk)
-            sitk_maskimg.SetSpacing(spacing)
-            sitk_maskimg.SetOrigin(origin)
-            sub_img_file = img_file[len(luna_subset_path):-4]
-            sitk.WriteImage(sitk_maskimg, luna_subset_mask_path + sub_img_file + "_segmentation.mhd")
+          mask_itk = np.uint8(mask_itk * 255.)
+          mask_itk = np.clip(mask_itk, 0, 255).astype('uint8')
+          sitk_maskimg = sitk.GetImageFromArray(mask_itk)
+          sitk_maskimg.SetSpacing(spacing)
+          sitk_maskimg.SetOrigin(origin)
+          sub_img_file = img_file[len(luna_subset_path):-4]
+          sitk.WriteImage(sitk_maskimg, luna_subset_mask_path + sub_img_file + "_segmentation.mhd")
