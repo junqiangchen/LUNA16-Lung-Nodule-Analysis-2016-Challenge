@@ -38,11 +38,15 @@ for subsetindex in range(10):
     if not os.path.exists(luna_subset_mask_path):
         os.makedirs(luna_subset_mask_path)
     file_list = glob(luna_subset_path + "*.mhd")
+    
+    file_list_path=[]
+    for i in range(len(file_list)):
+        file_list_path.append(file_list[i][0:-4])
 
     # The locations of the nodes
     luna_csv_path = "G:\Data\LIDC\LUNA16"
     df_node = pd.read_csv(luna_csv_path + "/CSVFILES/" + "annotations.csv")
-    df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_list, file_name))
+    df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_list_path, file_name))
     df_node = df_node.dropna()
     # Looping over the image files
     for fcount, img_file in enumerate(tqdm(file_list)):
