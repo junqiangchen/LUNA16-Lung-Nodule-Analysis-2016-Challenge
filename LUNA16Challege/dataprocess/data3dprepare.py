@@ -34,7 +34,9 @@ def subimage_generator(image, mask, patch_block_size, numberxy, numberz):
         for z in range(step_z, numberz * (stridez + 1) + step_z, numberz):
             for x in range(step_width, numberxy * (stridewidth + 1) + step_width, numberxy):
                 for y in range(step_height, numberxy * (strideheight + 1) + step_height, numberxy):
-                    if np.max(mask[z:z + blockz, x:x + block_width, y:y + block_height]) != 0:
+                    temp1=(mask[z:z + blockz, x:x + block_width, y:y + block_height]!=0).sum()
+                    temp2=blockz*block_width*block_height/20.0
+                    if temp1>temp2:
                         hr_samples_list.append(image[z:z + blockz, x:x + block_width, y:y + block_height])
                         hr_mask_samples_list.append(mask[z:z + blockz, x:x + block_width, y:y + block_height])
         hr_samples = np.array(hr_samples_list).reshape((len(hr_samples_list), blockz, block_width, block_height))
@@ -118,7 +120,7 @@ def preparenoduledetectiontraindata():
     maskpath = "G:\Data\LIDC\LUNA16\process\mask\\"
     trainImage = "G:\Data\LIDC\LUNA16\segmentation\Image"
     trainMask = "G:\Data\LIDC\LUNA16\segmentation\Mask"
-    prepare3dtraindata(srcpath, maskpath, trainImage, trainMask, number, height, width, (16, 96, 96), 10, 16)
+    prepare3dtraindata(srcpath, maskpath, trainImage, trainMask, number, height, width, (16, 96, 96), 10, 10)
 
 
 preparenoduledetectiontraindata()
