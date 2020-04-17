@@ -94,7 +94,7 @@ def load_itkfilewithtrucation(filename, upper=200, lower=-200):
 
 
 def processOriginaltraindata():
-    expandslice = 5
+    expandslice = 13
     trainImage = "G:\\Data\\LIDC\\LUNA16\\process\\image\\"
     trainMask = "G:\Data\LIDC\LUNA16\process\mask\\"
     """
