@@ -35,8 +35,8 @@ def save_file2csvv2(file_dir, file_name,label):
     out = open(file_name, 'w')
     sub_files = files_name_path(file_dir)
     out.writelines("class,filename" + "\n")
-    for index in range(len(sub_dirs)):
-        out.writelines(file_dir + "/" + label+","+sub_files[index] + "\n")
+    for index in range(len(sub_files)):
+        out.writelines(label+","+file_dir + "/" + sub_files[index] + "\n")
        
 
 def save_file2csv(file_dir, file_name):
