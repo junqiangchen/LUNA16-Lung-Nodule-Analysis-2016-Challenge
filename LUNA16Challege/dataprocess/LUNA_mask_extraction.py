@@ -9,14 +9,19 @@ tqdm = lambda x: x
 
 
 # get mask_region from csv data
-def make_mask(mask, v_center, v_diam):
-    v_diam = np.rint(v_diam / 2)
-    z_min = int(v_center[0] - v_diam)
-    z_max = int(v_center[0] + v_diam + 1)
-    x_min = int(v_center[1] - v_diam)
-    x_max = int(v_center[1] + v_diam + 1)
-    y_min = int(v_center[2] - v_diam)
-    y_max = int(v_center[2] + v_diam + 1)
+def make_mask(mask, v_center, v_diam,spacing):
+	v_diam_z=int(diam/spacing[2]+1)
+	v_diam_y=int(diam/spacing[1]+1)
+	v_diam_x=int(diam/spacing[0]+1)
+    v_diam_z = np.rint(v_diam_z / 2)
+	v_diam_y = np.rint(v_diam_y / 2)
+    v_diam_x = np.rint(v_diam_x / 2)
+	z_min = int(v_center[0] - v_diam_z)
+    z_max = int(v_center[0] + v_diam_z + 1)
+    x_min = int(v_center[1] - v_diam_x)
+    x_max = int(v_center[1] + v_diam_x + 1)
+    y_min = int(v_center[2] - v_diam_y)
+    y_max = int(v_center[2] + v_diam_y + 1)
     mask[z_min:z_max, x_min:x_max, y_min:y_max] = 1.0
     # output nodule pixel size for preparing the classify
     print((z_max - z_min, x_max - x_min, y_max - y_min))
@@ -80,10 +85,10 @@ for subsetindex in range(10):
                 # nodule center
                 v_center = np.rint((center - origin) / spacing)
                 # nodule diam
-                v_diam = int(diam/spacing[0]+3)
+                v_diam = diam
                 # convert x,y,z order v_center to z,y,z order v_center
                 v_center[0], v_center[1], v_center[2] = v_center[2], v_center[1], v_center[0]
-                make_mask(mask_itk, v_center, v_diam)
+                make_mask(mask_itk, v_center, v_diam,spacing)
 
           mask_itk = np.uint8(mask_itk * 255.)
           mask_itk = np.clip(mask_itk, 0, 255).astype('uint8')
