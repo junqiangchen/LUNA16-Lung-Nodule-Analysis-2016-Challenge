@@ -10,13 +10,13 @@ tqdm = lambda x: x
 
 # get mask_region from csv data
 def make_mask(mask, v_center, v_diam,spacing):
-	v_diam_z=int(diam/spacing[2]+1)
-	v_diam_y=int(diam/spacing[1]+1)
-	v_diam_x=int(diam/spacing[0]+1)
+    v_diam_z=int(diam/spacing[2]+1)
+    v_diam_y=int(diam/spacing[1]+1)
+    v_diam_x=int(diam/spacing[0]+1)
     v_diam_z = np.rint(v_diam_z / 2)
-	v_diam_y = np.rint(v_diam_y / 2)
+    v_diam_y = np.rint(v_diam_y / 2)
     v_diam_x = np.rint(v_diam_x / 2)
-	z_min = int(v_center[0] - v_diam_z)
+    z_min = int(v_center[0] - v_diam_z)
     z_max = int(v_center[0] + v_diam_z + 1)
     x_min = int(v_center[1] - v_diam_x)
     x_max = int(v_center[1] + v_diam_x + 1)
