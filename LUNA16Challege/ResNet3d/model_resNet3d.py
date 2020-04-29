@@ -14,7 +14,7 @@ def conv_relu_drop(x, kernal, drop, phase, image_z=None, height=None, width=None
                                n_outputs=kernal[-1], activefunction='relu', variable_name=scope + 'conv_W')
         B = bias_variable([kernal[-1]], variable_name=scope + 'conv_B')
         conv = conv3d(x, W) + B
-        conv = normalizationlayer(conv, is_train=phase, height=height, width=width, image_z=image_z, norm_type='batch',
+        conv = normalizationlayer(conv, is_train=phase, height=height, width=width, image_z=image_z, norm_type='group',
                                   scope=scope)
         conv = tf.nn.dropout(tf.nn.relu(conv), drop)
         return conv
