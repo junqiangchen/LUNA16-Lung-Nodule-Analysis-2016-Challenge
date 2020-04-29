@@ -245,6 +245,6 @@ class ResNet3dModule(object):
                                                                   feed_dict={self.X: [test_images[i]],
                                                                              self.Y_gt: y_dummy,
                                                                              self.drop: 1,
-                                                                             self.phase: 0})
+                                                                             self.phase: 1})
             predictvalue[i], predict_probvalue[i] = predictvaluetmp, predict_probvaluetmp[0][1]
         return predictvalue, predict_probvalue
