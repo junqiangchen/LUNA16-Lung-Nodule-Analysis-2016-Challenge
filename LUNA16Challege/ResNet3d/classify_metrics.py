@@ -79,8 +79,7 @@ def classification_reports(y_true, y_pred):
 
 
 def confusion_matrixs(y_true, y_pred):
-    labels = list(set(y_true))
-    conf_mat = confusion_matrix(y_true, y_pred, labels=labels)
+    conf_mat = confusion_matrix(y_true, y_pred)
     print("confusion _matrixs(left labels:y_true,up labels:y_pred):")
     print(conf_mat)
 
