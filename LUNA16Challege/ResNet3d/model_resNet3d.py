@@ -69,9 +69,11 @@ def _create_conv_net(X, image_z, image_width, image_height, image_channel, drop,
     layer5 = conv_relu_drop(x=down4, kernal=(3, 3, 3, 128, 256), drop=drop, phase=phase, scope='layer5_1')
     layer5 = conv_relu_drop(x=layer5, kernal=(3, 3, 3, 256, 256), drop=drop, phase=phase, scope='layer5_2')
     layer5 = resnet_Add(x1=down4, x2=layer5)
+    # global average pooling
+    gap = tf.reduce_mean(layer5, axis=(1, 2, 3))
     # layer6->FC1
-    layer6 = tf.reshape(layer5, [-1, 3 * 3 * 3 * 256])  # shape=(?, 512)
-    layer6 = full_connected_relu_drop(x=layer6, kernal=(3 * 3 * 3 * 256, 512), drop=drop, activefunction='relu',
+    layer6 = tf.reshape(gap, [-1, 256])  # shape=(?, 256)
+    layer6 = full_connected_relu_drop(x=layer6, kernal=(256, 512), drop=drop, activefunction='relu',
                                       scope='fc1')
     # layer7->output
     output = full_connected_relu_drop(x=layer6, kernal=(512, n_class), drop=drop, activefunction='regression',
