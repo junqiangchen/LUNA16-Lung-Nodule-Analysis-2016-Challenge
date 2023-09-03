@@ -13,22 +13,22 @@ The following dependencies are needed:
 
 ## How to Use
 
-**1、Preprocess**
+**1. Preprocess**
 
 **nodule detection**
 
-* convert annotation.csv file to image mask file:run the LUNA_mask_extraction.py
-* analyze the ct image,and get the slice thickness and window width and position:run the dataAnaly.py
-* generate lung nodule ct image and mask:run the data2dprepare.py
-* generate patch(96,96,16) lung nodule image and mask:run the data3dprepare.py
-* save lung nodule data and mask into csv file run the utils.py,like this:G:\Data\segmentation\Image/0_161....
+* convert annotation.csv file to image mask file: run the LUNA_mask_extraction.py
+* analyze the ct image, and get the slice thickness and window width and position: run the dataAnaly.py
+* generate lung nodule ct image and mask: run the data2dprepare.py
+* generate patch(96,96,16) lung nodule image and mask: run the data3dprepare.py
+* save lung nodule data and mask into csv file, run the utils.py, like this: G:\Data\segmentation\Image/0_161....
 
 **nodule classify**
 
-* convert candidates.csv file to nodule and not-nodule image(48,48,48):run the LUNA_node_extraction.py
+* convert candidates.csv file to nodule and not-nodule image(48,48,48): run the LUNA_node_extraction.py
 * Augment the nodule image data: run the Augmain.py
-* split data into train data(80%) and test data(20%):run the subset.py
-* save lung nodule data and label into csv file like this:1,G:\Data\classify\1_aug/0_17.npy
+* split data into train data(80%) and test data(20%): run the subset.py
+* save lung nodule data and label into csv file like this: 1,G:\Data\classify\1_aug/0_17.npy
 
 **2、Nodule Detection**
 * the VNet model
@@ -45,7 +45,7 @@ The following dependencies are needed:
 * train and predict in the script of ResNet3d_train.py and ResNet3d_predict.py
 
 **4、download trained model**
-* i have shared the trained model of nodule detection and false positive reduction on here: https://pan.baidu.com/s/1I7zhzmPsTCbz0ZeIntNrUA ,password:orpm
+* I have shared the trained model of nodule detection and false positive reduction on here: [https://pan.baidu.com/s/1I7zhzmPsTCbz0ZeIntNrUA](https://pan.baidu.com/s/1I7zhzmPsTCbz0ZeIntNrUA), password:orpm
 
 ## Result
 
@@ -67,7 +67,7 @@ The following dependencies are needed:
 ![](classfy_loss.PNG)
 ![](classfy_accu.PNG)
 
-* ROC,Confusion Matrix and Metrics
+* ROC, Confusion Matrix and Metrics
 
 ![](roc.PNG)
 ![](ConfusionMatrix.PNG)
